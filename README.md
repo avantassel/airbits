@@ -1,14 +1,12 @@
-# See-Oh-Two
+# AirBits
+![Logo](images/logo.png)
 
-![Logo](images/seeohtwo-eye-logo.png)
+AirBits was developed for the [Reinventing Healthy Spaces
+with Amazon Web Services challenge](https://www.hackster.io/contests/Healthy-Spaces-with-AWS) and is available on [Hackster.io](https://www.hackster.io/avantassel/airbits-ea8503).
 
-See-Oh-Two was developed for the [Reinventing Healthy Spaces
-with Amazon Web Services challenge](https://www.hackster.io/contests/Healthy-Spaces-with-AWS) and is available on [Hackster.io](https://www.hackster.io/avantassel/see-oh-two-ea8503).
+The goal of AirBits is to see the levels around you for indoor spaces and alert you about possible dangerous levels in an effort to create healthy spaces.  Whether that space is work or home.  
 
-
-The goal of See-Oh-Two is to see the levels around you for indoor spaces and alert you about possible dangerous levels in an effort to create healthy spaces.  Whether that space is work or home.  
-
-See-Oh-Two measures CO2, TVOCs and decibel levels.  One or many devices could be installed in a space.  The realtime data will be displayed on the M5 Core2 device screen along with colored LED lights based on current levels.  This data is also sent in realtime to AWS, which would allow people in a geo fenced area to be notified after installing an app.
+AirBits measures CO2, TVOCs and decibel levels.  One or many devices could be installed in a space.  The realtime data will be displayed on the M5 Core2 device screen along with colored LED lights based on current levels.  This data is also sent in realtime to AWS, which would allow people in a geo fenced area to be notified after installing an app.
 
 ## CO2
 

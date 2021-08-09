@@ -190,23 +190,22 @@ void MicroPhoneFFT()
             }
             DisFFTbuff.fillRect(x*12,54-y*6 - 5,5,5,colorRect);
         }
-    }
-    // Convert decibels
-            // https://circuitdigest.com/microcontroller-projects/arduino-sound-level-measurement
-            // decibels = (adc_data + 83.2073) / 11.003;
-//            decibels = adc_data;
+    }    
     DisFFTbuff.pushSprite(20, 160);
 }
 
 void clearScreen(){
-  M5.Lcd.fillRect(0, 100, 320, 30, TFT_BLACK);
+  M5.Lcd.fillRect(0, 100, 320, 0, TFT_BLACK);  
+  M5.Lcd.drawString("     ", 130, 40 , 4);
+  M5.Lcd.drawString("     ", 130, 80 , 4);
+  M5.Lcd.drawString("     ", 130, 130 , 4);
   FastLED.clear();
 }
 
 void setup() {
   M5.begin(true, false, true, true);
   M5.Lcd.fillScreen(TFT_BLACK);
-  header("See Oh Two",TFT_BLACK);
+  header("AirBits",TFT_BLACK);
 
   if (! sgp.begin()){
     Serial.println("Sensor not found :(");
@@ -237,7 +236,9 @@ void loop() {
     Serial.println("Measurement failed");
     return;
   }
-  
+
+//  M5.Lcd.setTextPadding(M5.Lcd.width());
+    
   if (!sgp.IAQmeasure()) {
     M5.Lcd.drawString("N/A", 140, 40 , 4);
     M5.Lcd.drawString("N/A", 130, 80 , 4);
