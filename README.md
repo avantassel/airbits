@@ -1,5 +1,6 @@
 # AirBits
 ![Logo](images/logo.png)
+![Device](images/device.jpg)
 
 AirBits was developed for the [Reinventing Healthy Spaces
 with Amazon Web Services challenge](https://www.hackster.io/contests/Healthy-Spaces-with-AWS) and is available on [Hackster.io](https://www.hackster.io/avantassel/airbits-ea8503).

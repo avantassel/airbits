@@ -196,9 +196,9 @@ void MicroPhoneFFT()
 
 void clearScreen(){
   M5.Lcd.fillRect(0, 100, 320, 0, TFT_BLACK);  
-  M5.Lcd.drawString("     ", 130, 40 , 4);
-  M5.Lcd.drawString("     ", 130, 80 , 4);
-  M5.Lcd.drawString("     ", 130, 130 , 4);
+  M5.Lcd.drawString("      ", 130, 40 , 4);
+  M5.Lcd.drawString("      ", 130, 80 , 4);
+  M5.Lcd.drawString("      ", 130, 130 , 4);
   FastLED.clear();
 }
 
