@@ -2,8 +2,6 @@
 ![Logo](images/logo.png)
 ![Device](images/device.jpg)
 
-ad319kovxmwbk-ats.iot.us-east-1.amazonaws.com
-
 AirBits was developed for the [Reinventing Healthy Spaces
 with Amazon Web Services challenge](https://www.hackster.io/contests/Healthy-Spaces-with-AWS) and is available on [Hackster.io](https://www.hackster.io/avantassel/airbits-ea8503).
 
@@ -59,6 +57,8 @@ Source: https://www.cdc.gov/nceh/hearing_loss/what_noises_cause_hearing_loss.htm
 
 ## Configuring AWS IOT
 
+Thanks to a little help from this blog article, https://aws.amazon.com/blogs/compute/building-an-aws-iot-core-device-using-aws-serverless-and-an-esp32/
+
 ```sh
 # copy the secrets file
 cp secrets-sample.h secrets.h
@@ -92,6 +92,11 @@ https://console.aws.amazon.com/iot/home?region=us-east-1#/thing/airbit?tab=activ
   }
 }
 ```
+
+## Building
+
+Open [airbits.ino](airbits.ino) with [Arduino Studio](https://www.arduino.cc/en/software).
+
 
 ## TODO
 
