@@ -2,6 +2,8 @@
 ![Logo](images/logo.png)
 ![Device](images/device.jpg)
 
+ad319kovxmwbk-ats.iot.us-east-1.amazonaws.com
+
 AirBits was developed for the [Reinventing Healthy Spaces
 with Amazon Web Services challenge](https://www.hackster.io/contests/Healthy-Spaces-with-AWS) and is available on [Hackster.io](https://www.hackster.io/avantassel/airbits-ea8503).
 
@@ -54,3 +56,15 @@ Source: https://www.cdc.gov/nceh/hearing_loss/what_noises_cause_hearing_loss.htm
 - [SGP30](https://shop.m5stack.com/products/tvoc-eco2-gas-unit-sgp30) CO2 Sensor
 - [SGP30](https://shop.m5stack.com/products/tvoc-eco2-gas-unit-sgp30) TVOC Total Volatile Organic Compounds
 - [SPM1423](https://shop.m5stack.com/products/pdm-microphone-unit-spm1423) (Built into the M5 AWS Core2) microphone used to record decibel levels is an enhanced far-field MEMS microphone.
+
+## Connecting AWS IOT
+
+```
+aws configure
+aws iot describe-endpoint --endpoint-type iot:Data-ATS
+
+# provision the device
+git clone https://github.com/m5stack/Core2-for-AWS-IoT-EduKit.git
+cd Core2-for-AWS-IoT-EduKit/Blinky-Hello-World/utilities/AWS_IoT_registration_helper
+python3 registration_helper.py -p /dev/cu.usbserial-023F1A8E
+```

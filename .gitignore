@@ -1,2 +1,6 @@
 .DS_Store
 certs
+sdkconfig
+.pio
+.vscode
+secrets.h

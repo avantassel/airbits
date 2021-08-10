@@ -6,16 +6,34 @@
 #include "fft.h"
 #include "Adafruit_SGP30.h"
 #include "FastLED.h"
+#include <WiFiClientSecure.h>
+#include <MQTTClient.h>
+#include <ArduinoJson.h>
+#include "WiFi.h"
+
+// Edit the secrets file
+// cp secrets-sample.h secrets.h
+#include "secrets.h"
 
 #define PIN_CLK  0
 #define PIN_DATA 34
 
 #define MODE_MIC 0
 
+#define AWS_IOT_PUBLISH_TOPIC   "airbit/pub"
+#define AWS_IOT_SUBSCRIBE_TOPIC "airbit/sub"
+
+WiFiClientSecure net = WiFiClientSecure();
+MQTTClient client = MQTTClient(256);
+
 Adafruit_SGP30 sgp;
-int i = 15;
-long last_millis = 0;
+int co2 = 0;
+int tvoc = 0;
+float sound = 0;
 float decibels = 0;
+bool sendToAWS = true;
+
+unsigned long lastMillis = 0;
 
 TFT_eSprite DisFFTbuff =  TFT_eSprite(&M5.Lcd);
 static QueueHandle_t fftvalueQueue = nullptr;
@@ -27,12 +45,73 @@ CRGB ledsBuff[LEDS_NUM];
 
 void header(const char *string, uint16_t color)
 {
-    M5.Lcd.fillScreen(color);
     M5.Lcd.setTextSize(1);
-    M5.Lcd.setTextColor(TFT_WHITE, TFT_BLACK);
-    M5.Lcd.fillRect(0, 0, 360, 30, TFT_BLACK);
+    M5.Lcd.setTextColor(color, TFT_BLACK);
+    M5.Lcd.fillRect(0, 0, 320, 30, TFT_BLACK);
     M5.Lcd.setTextDatum(TC_DATUM);
     M5.Lcd.drawString(string, 160, 3, 4); 
+}
+
+void subheader(const char *string, uint16_t color)
+{
+  M5.Lcd.setTextSize(1);
+  M5.Lcd.setTextColor(color, TFT_BLACK);
+  M5.Lcd.fillRect(0, 0, 320, 60, TFT_BLACK);
+  M5.Lcd.setTextDatum(TC_DATUM);
+  M5.Lcd.drawString(string, 160, 30, 4); 
+}
+
+void clearScreen(){
+  M5.Lcd.fillRect(0, 100, 320, 0, TFT_BLACK);  
+  M5.Lcd.setTextColor(TFT_WHITE, TFT_BLACK);
+  M5.Lcd.drawString("      ", 130, 40 , 4);
+  M5.Lcd.drawString("      ", 130, 80 , 4);
+  M5.Lcd.drawString("      ", 130, 130 , 4);
+  FastLED.clear();
+}
+
+void connectAWS()
+{
+  WiFi.mode(WIFI_STA);
+  WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
+
+  subheader("Connecting to Wi-Fi...", TFT_YELLOW);
+  Serial.println("Connecting to Wi-Fi...");
+
+  while (WiFi.status() != WL_CONNECTED){
+    delay(500);
+    Serial.print(".");
+  }
+
+  // Configure WiFiClientSecure to use the AWS IoT device credentials
+  net.setCACert(AWS_CERT_CA);
+  net.setCertificate(AWS_CERT_CRT);
+  net.setPrivateKey(AWS_CERT_PRIVATE);
+
+  // Connect to the MQTT broker on the AWS endpoint we defined earlier
+  client.begin(AWS_IOT_ENDPOINT, 8883, net);
+
+  // Create a message handler
+  client.onMessage(messageHandler);
+
+  Serial.print("Connecting to AWS IOT");
+  subheader("Connecting to AWS IOT...", TFT_YELLOW);
+
+  while (!client.connect(THINGNAME)) {
+    Serial.print(".");
+    delay(100);
+  }
+
+  if(!client.connected()){
+    Serial.println("AWS IoT Timeout!");
+    return;
+  }
+
+  // Subscribe to a topic
+  client.subscribe(AWS_IOT_SUBSCRIBE_TOPIC);
+
+  Serial.println("AWS IoT Connected!");
+  subheader("", TFT_BLACK);
 }
 
 typedef struct {
@@ -110,6 +189,7 @@ static void i2sMicroFFTtask(void *arg) {
             // couldn't find a way to convert PDM MEMS to dB
             // this seems to be pretty close after side by side with a decibel reader
             decibels = adc_data / 1.6;
+            sound = adc_data;
             
             fft_execute(real_fft_plan);
 
@@ -194,24 +274,42 @@ void MicroPhoneFFT()
     DisFFTbuff.pushSprite(20, 160);
 }
 
-void clearScreen(){
-  M5.Lcd.fillRect(0, 100, 320, 0, TFT_BLACK);  
-  M5.Lcd.drawString("      ", 130, 40 , 4);
-  M5.Lcd.drawString("      ", 130, 80 , 4);
-  M5.Lcd.drawString("      ", 130, 130 , 4);
-  FastLED.clear();
+void publishMessage()
+{
+  StaticJsonDocument<200> doc;
+  doc["time"] = millis();
+  doc["co2"] = sgp.eCO2;
+  doc["tvoc"] = sgp.TVOC;
+  doc["sound"] = decibels;  
+  char jsonBuffer[512];
+  serializeJson(doc, jsonBuffer); // print to client
+  client.publish(AWS_IOT_PUBLISH_TOPIC, jsonBuffer);
+  Serial.println("MQTT Posted");
+}
+
+void messageHandler(String &topic, String &payload) {
+  Serial.println("incoming: " + topic + " - " + payload);
+
+  StaticJsonDocument<200> doc;
+  deserializeJson(doc, payload);
+  const char* message = doc["message"];  
 }
 
 void setup() {
   M5.begin(true, false, true, true);
   M5.Lcd.fillScreen(TFT_BLACK);
-  header("AirBits",TFT_BLACK);
+  header("AirBits", TFT_WHITE);
+  lastMillis = millis();
 
-  if (! sgp.begin()){
+  if(sendToAWS){
+    connectAWS();
+  }
+
+  if (!sgp.begin()){
     Serial.println("Sensor not found :(");
     while (1);
   }
-  
+    
   M5.Lcd.drawString("CO2:", 70, 40, 4);
   M5.Lcd.drawString("TVOC:", 60, 80, 4);
   M5.Lcd.drawString("VOL:", 70, 130, 4);
@@ -237,17 +335,14 @@ void loop() {
     return;
   }
 
-//  M5.Lcd.setTextPadding(M5.Lcd.width());
-    
-  if (!sgp.IAQmeasure()) {
-    M5.Lcd.drawString("N/A", 140, 40 , 4);
-    M5.Lcd.drawString("N/A", 130, 80 , 4);
-  } else {
-    M5.Lcd.drawNumber(sgp.eCO2, 140, 40, 4);
-    M5.Lcd.drawNumber(sgp.TVOC, 130, 80 , 4);
-    // Danger Sidebar LED
-    danger = (sgp.eCO2 > 400);
-  }
+  co2 = sgp.eCO2;
+  tvoc = sgp.TVOC;
+
+  M5.Lcd.drawNumber(co2, 140, 40, 4);
+  M5.Lcd.drawNumber(tvoc, 130, 80 , 4);
+  // Danger Sidebar LED
+  danger = (co2 > 400);
+  
   M5.Lcd.drawString("ppb", 210, 80, 4);
   M5.Lcd.drawString("ppm", 210, 40, 4);
   
@@ -267,7 +362,15 @@ void loop() {
   
   Serial.print("eCO2 "); Serial.print(sgp.eCO2); Serial.print(" ppm\t");
   Serial.print("TVOC "); Serial.print(sgp.TVOC); Serial.print(" ppb\t");
+  Serial.print("sound "); Serial.print(sound); Serial.print("\t");
   Serial.print("dB "); Serial.print(decibels); Serial.println(" dB\t");
  
+  // publish a message roughly every 5 seconds.
+  if (sendToAWS && millis() - lastMillis > 5000) {
+    lastMillis = millis();
+    publishMessage();
+    client.loop();  
+  }
+  
   delay(1000);
 }
