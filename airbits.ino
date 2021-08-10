@@ -15,13 +15,13 @@
 // cp secrets-sample.h secrets.h
 #include "secrets.h"
 
+#define VERSION 1
 #define PIN_CLK  0
 #define PIN_DATA 34
+#define MODE_MIC 1
 
-#define MODE_MIC 0
-
-#define AWS_IOT_PUBLISH_TOPIC   "airbit/pub"
-#define AWS_IOT_SUBSCRIBE_TOPIC "airbit/sub"
+#define AWS_IOT_PUBLISH_TOPIC   "$aws/things/airbit/shadow/update"
+#define AWS_IOT_SUBSCRIBE_TOPIC "$aws/things/airbit/shadow/delta"
 
 WiFiClientSecure net = WiFiClientSecure();
 MQTTClient client = MQTTClient(256);
@@ -111,7 +111,7 @@ void connectAWS()
   client.subscribe(AWS_IOT_SUBSCRIBE_TOPIC);
 
   Serial.println("AWS IoT Connected!");
-  subheader("", TFT_BLACK);
+  subheader("", TFT_WHITE);
 }
 
 typedef struct {
@@ -277,12 +277,16 @@ void MicroPhoneFFT()
 void publishMessage()
 {
   StaticJsonDocument<200> doc;
-  doc["time"] = millis();
-  doc["co2"] = sgp.eCO2;
-  doc["tvoc"] = sgp.TVOC;
-  doc["sound"] = decibels;  
+  doc["co2"] = co2;
+  doc["tvoc"] = tvoc;
+  doc["sound"] = sound;  
+  doc["decibels"] = decibels;  
+  
+  StaticJsonDocument<200> state;
+  state["state"]["reported"] = doc;
+
   char jsonBuffer[512];
-  serializeJson(doc, jsonBuffer); // print to client
+  serializeJson(state, jsonBuffer); // print to client
   client.publish(AWS_IOT_PUBLISH_TOPIC, jsonBuffer);
   Serial.println("MQTT Posted");
 }
@@ -297,14 +301,14 @@ void messageHandler(String &topic, String &payload) {
 
 void setup() {
   M5.begin(true, false, true, true);
-  M5.Lcd.fillScreen(TFT_BLACK);
-  header("AirBits", TFT_WHITE);
+  M5.Lcd.fillScreen(TFT_BLACK);  
   lastMillis = millis();
 
   if(sendToAWS){
     connectAWS();
   }
 
+  header("AirBits", TFT_WHITE);
   if (!sgp.begin()){
     Serial.println("Sensor not found :(");
     while (1);

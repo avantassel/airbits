@@ -57,14 +57,42 @@ Source: https://www.cdc.gov/nceh/hearing_loss/what_noises_cause_hearing_loss.htm
 - [SGP30](https://shop.m5stack.com/products/tvoc-eco2-gas-unit-sgp30) TVOC Total Volatile Organic Compounds
 - [SPM1423](https://shop.m5stack.com/products/pdm-microphone-unit-spm1423) (Built into the M5 AWS Core2) microphone used to record decibel levels is an enhanced far-field MEMS microphone.
 
-## Connecting AWS IOT
+## Configuring AWS IOT
 
+```sh
+# copy the secrets file
+cp secrets-sample.h secrets.h
 ```
+
+Create a thing called `airbit` and download the certs, then paste those in [secrets-sample.h](secrets.h)
+
+https://console.aws.amazon.com/iot/home?region=us-east-1#/thinghub
+
+```sh
+# Get the IOT Endpoint URL
 aws configure
 aws iot describe-endpoint --endpoint-type iot:Data-ATS
-
-# provision the device
-git clone https://github.com/m5stack/Core2-for-AWS-IoT-EduKit.git
-cd Core2-for-AWS-IoT-EduKit/Blinky-Hello-World/utilities/AWS_IoT_registration_helper
-python3 registration_helper.py -p /dev/cu.usbserial-023F1A8E
 ```
+
+Paste that along with your WiFi ssid/pass in [secrets-sample.h](secrets.h)
+
+This JSON will get posted to the thing activity tab every 5 seconds,
+
+https://console.aws.amazon.com/iot/home?region=us-east-1#/thing/airbit?tab=activity
+
+```json
+{
+  "state": {
+    "reported": {
+      "co2": 453,
+      "tvoc": 10,
+      "sound": 72,
+      "decibels": 45
+    }
+  }
+}
+```
+
+## TODO
+
+- Add GPS module to send lat/lng in order to notifiy people in a geo-fenced area.
