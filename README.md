@@ -97,6 +97,12 @@ https://console.aws.amazon.com/iot/home?region=us-east-1#/thing/airbit?tab=activ
 
 Open [airbits.ino](airbits.ino) with [Arduino Studio](https://www.arduino.cc/en/software).
 
+## Device Options
+
+- Button A
+  - Toggle Sending to AWS IOT MQTT
+- Button B
+  - Toggle DarkMode
 
 ## TODO
 

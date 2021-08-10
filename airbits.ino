@@ -31,7 +31,8 @@ int co2 = 0;
 int tvoc = 0;
 float sound = 0;
 float decibels = 0;
-bool sendToAWS = true;
+bool sendToAWS = false;
+bool darkMode = true;
 
 unsigned long lastMillis = 0;
 
@@ -43,27 +44,50 @@ static QueueHandle_t i2sstateQueue = nullptr;
 #define LEDS_NUM 10
 CRGB ledsBuff[LEDS_NUM];
 
-void header(const char *string, uint16_t color)
+void header(const char *string)
 {
     M5.Lcd.setTextSize(1);
-    M5.Lcd.setTextColor(color, TFT_BLACK);
-    M5.Lcd.fillRect(0, 0, 320, 30, TFT_BLACK);
+    if(darkMode){
+      M5.Lcd.setTextColor(TFT_WHITE, TFT_BLACK);
+      M5.Lcd.fillRect(0, 0, 320, 30, TFT_BLACK);  
+    } else {
+      M5.Lcd.setTextColor(TFT_BLACK, TFT_WHITE);
+      M5.Lcd.fillRect(0, 0, 320, 30, TFT_WHITE);  
+    }
+    
     M5.Lcd.setTextDatum(TC_DATUM);
     M5.Lcd.drawString(string, 160, 3, 4); 
+    if(sendToAWS){
+      if(darkMode)
+        M5.Lcd.setTextColor(TFT_YELLOW, TFT_BLACK);
+      else
+        M5.Lcd.setTextColor(TFT_YELLOW, TFT_WHITE);
+      M5.Lcd.drawString("AWS", 295, 3, 4);  
+    }
 }
 
 void subheader(const char *string, uint16_t color)
 {
   M5.Lcd.setTextSize(1);
-  M5.Lcd.setTextColor(color, TFT_BLACK);
-  M5.Lcd.fillRect(0, 0, 320, 60, TFT_BLACK);
+  if(darkMode){
+    M5.Lcd.setTextColor(color, TFT_BLACK);
+    M5.Lcd.fillRect(0, 0, 320, 60, TFT_BLACK);
+  } else {
+    M5.Lcd.setTextColor(color, TFT_WHITE);
+    M5.Lcd.fillRect(0, 0, 320, 60, TFT_WHITE);
+  }
   M5.Lcd.setTextDatum(TC_DATUM);
   M5.Lcd.drawString(string, 160, 30, 4); 
 }
 
 void clearScreen(){
-  M5.Lcd.fillRect(0, 100, 320, 0, TFT_BLACK);  
-  M5.Lcd.setTextColor(TFT_WHITE, TFT_BLACK);
+  if(darkMode){
+    M5.Lcd.fillRect(0, 100, 320, 0, TFT_BLACK);  
+    M5.Lcd.setTextColor(TFT_WHITE, TFT_BLACK);
+  } else {
+    M5.Lcd.fillRect(0, 100, 320, 0, TFT_WHITE);  
+    M5.Lcd.setTextColor(TFT_BLACK, TFT_WHITE);
+  }
   M5.Lcd.drawString("      ", 130, 40 , 4);
   M5.Lcd.drawString("      ", 130, 80 , 4);
   M5.Lcd.drawString("      ", 130, 130 , 4);
@@ -248,9 +272,9 @@ void MicroPhoneFFT()
 {
     uint8_t FFTValueBuff[24];
     xQueueReceive( fftvalueQueue, (void * )&FFTValueBuff, portMAX_DELAY );
-    DisFFTbuff.fillRect(0,0,320,54,DisFFTbuff.color565(0x00,0x00,0x00));
-    uint32_t colorY = DisFFTbuff.color565(0xff,0x9c,0x00);
-    uint32_t colorG = DisFFTbuff.color565(0x66,0xff,0x00);
+    DisFFTbuff.fillRect(0, 0, 320, 54, (darkMode ? TFT_BLACK : TFT_WHITE));
+    uint32_t colorY = DisFFTbuff.color565(0xff, 0x9c, (darkMode ? TFT_BLACK : TFT_WHITE));
+    uint32_t colorG = DisFFTbuff.color565(0x66, 0xff, (darkMode ? TFT_BLACK : TFT_WHITE));
     uint32_t colorRect;
     for( int x = 0; x < 24; x++ )
     {
@@ -299,25 +323,33 @@ void messageHandler(String &topic, String &payload) {
   const char* message = doc["message"];  
 }
 
+void drawLabels(){
+  if(darkMode)    
+    M5.Lcd.setTextColor(TFT_WHITE, TFT_BLACK);
+  else
+    M5.Lcd.setTextColor(TFT_BLACK, TFT_WHITE);
+      
+  M5.Lcd.drawString("CO2:", 70, 40, 4);
+  M5.Lcd.drawString("TVOC:", 60, 80, 4);
+  M5.Lcd.drawString("VOL:", 70, 130, 4);
+}
+
 void setup() {
   M5.begin(true, false, true, true);
   M5.Lcd.fillScreen(TFT_BLACK);  
   lastMillis = millis();
+  
+  connectAWS();  
 
-  if(sendToAWS){
-    connectAWS();
-  }
-
-  header("AirBits", TFT_WHITE);
+  header("AirBits");
+  
   if (!sgp.begin()){
     Serial.println("Sensor not found :(");
     while (1);
   }
-    
-  M5.Lcd.drawString("CO2:", 70, 40, 4);
-  M5.Lcd.drawString("TVOC:", 60, 80, 4);
-  M5.Lcd.drawString("VOL:", 70, 130, 4);
 
+  drawLabels();
+  
   // Setup Microphone for decibel levels
   microPhoneSetup();
 
@@ -330,6 +362,21 @@ void setup() {
 }
 
 void loop() {
+  M5.update();
+  if (M5.BtnA.pressedFor(1000, 200)) {
+    sendToAWS = !sendToAWS;
+    header("AirBits");
+  }
+  if (M5.BtnB.pressedFor(1000, 200)) {
+    darkMode = !darkMode;
+    if(darkMode)
+      M5.Lcd.fillScreen(TFT_BLACK);
+    else
+      M5.Lcd.fillScreen(TFT_WHITE);
+    header("AirBits");
+    drawLabels();
+  }  
+  
   boolean danger = false;
   clearScreen();
   MicroPhoneFFT();  
