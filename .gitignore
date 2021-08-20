@@ -4,3 +4,4 @@ sdkconfig
 .pio
 .vscode
 secrets.h
+video

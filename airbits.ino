@@ -212,8 +212,10 @@ static void i2sMicroFFTtask(void *arg) {
             // https://circuitdigest.com/microcontroller-projects/arduino-sound-level-measurement
             // couldn't find a way to convert PDM MEMS to dB
             // this seems to be pretty close after side by side with a decibel reader
-            decibels = adc_data / 1.6;
-            sound = adc_data;
+            if(adc_data >= 0) {
+              decibels = adc_data / 1.6;
+              sound = adc_data;  
+            }            
             
             fft_execute(real_fft_plan);
 
@@ -385,9 +387,10 @@ void loop() {
     Serial.println("Measurement failed");
     return;
   }
-
-  co2 = sgp.eCO2;
-  tvoc = sgp.TVOC;
+  if(sgp.eCO2 >= 0)
+    co2 = sgp.eCO2;
+  if(sgp.TVOC >= 0)
+    tvoc = sgp.TVOC;
 
   M5.Lcd.drawNumber(co2, 140, 40, 4);
   M5.Lcd.drawNumber(tvoc, 130, 80 , 4);

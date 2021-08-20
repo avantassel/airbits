@@ -2,12 +2,30 @@
 ![Logo](images/logo.png)
 ![Device](images/device.jpg)
 
+## What It Is
+
 AirBits was developed for the [Reinventing Healthy Spaces
 with Amazon Web Services challenge](https://www.hackster.io/contests/Healthy-Spaces-with-AWS) and is available on [Hackster.io](https://www.hackster.io/avantassel/airbits-ea8503).
 
-The goal of AirBits is to see the levels around you for indoor spaces and alert you about possible dangerous levels in an effort to create healthy spaces.  Whether that space is work or home.  
+The goal of AirBits is to keep you informed about the levels of CO2 and TVOCs in realtime for indoor spaces before you enter or even while you are there.  These bits in the air can be dangerous to you when exposed at high levels for a period of time.  
+
+As we have found out with the recent pandemic and COVID-19 (SARS-CoV-2), air flow and good ventilation in indoor spaces is critical for keeping you healthy.  High CO2 levels could mean there is poor air flow or simply that there are too many people in that space and you are best to get out of it ASAP.
 
 AirBits measures CO2, TVOCs and decibel levels.  One or many devices could be installed in a space.  The realtime data will be displayed on the M5 Core2 device screen along with colored LED lights based on current levels.  This data is also sent in realtime to AWS, which would allow people in a geo fenced area to be notified after installing an app.
+
+## Bourbon Street Hypothetical
+
+Imagine you are walking down Bourbon Street in New Orleans where each bar or restaurant had an AirBits device sending realtime data to AWS.  You would have a smart phone app subscribed to the data stream that would notify you before entering a space.  
+
+Or an employee working the door could regulate foot traffic into their establishment if levels started to rise.  Of course this could also be automated and built into digital signs in windows or automating door access.
+
+![Bourbon-Street](images/bourbon-street.png)
+
+## OSHA
+
+According to OSHA, restaurant facility workers cannot be exposed to CO2 levels higher than 5,000 parts per million (ppm) over an 8-hour work day, which is about 0.5% of CO2 in the air. If exposure is short term, the limit is set to no more than 30,000 ppm for the duration of 10 minutes.
+
+Source: http://air-source.com/blog/osha-safety-standards-for-monitoring-restaurant-gases
 
 ## CO2
 
@@ -107,3 +125,4 @@ Open [airbits.ino](airbits.ino) with [Arduino Studio](https://www.arduino.cc/en/
 ## TODO
 
 - Add GPS module to send lat/lng in order to notifiy people in a geo-fenced area.
+- Build mobile app.
