@@ -2,6 +2,8 @@
 ![Logo](images/logo.png)
 ![Device](images/device.jpg)
 
+Walk through video https://youtu.be/ztfLtddiE5w
+
 ## What It Is
 
 AirBits was developed for the [Reinventing Healthy Spaces with Amazon Web Services challenge](https://www.hackster.io/contests/Healthy-Spaces-with-AWS) and is available on [Hackster.io](https://www.hackster.io/avantassel/airbits-ea8503).
@@ -11,8 +13,6 @@ The goal of AirBits is to keep you informed about the levels of CO2 and TVOCs in
 As we have found out with the recent pandemic and COVID-19 (SARS-CoV-2), air flow and good ventilation in indoor spaces is critical for keeping you healthy.  High CO2 levels could mean there is poor air flow or simply that there are too many people in that space and you are best to get out of it ASAP.
 
 AirBits measures CO2, TVOCs and decibel levels.  One or many devices could be installed in a space.  The realtime data will be displayed on the M5 Core2 device screen along with colored LED lights based on current levels.  This data is also sent in realtime to AWS, which would allow anyone in a geo-fenced area to be notified after installing an app.  This data could also be made available on any map app for indoor air quality (Google Maps, Apple Maps).
-
-![Video](https://youtu.be/ztfLtddiE5w)
 
 ## Bourbon Street Hypothetical
 
