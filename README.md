@@ -4,14 +4,15 @@
 
 ## What It Is
 
-AirBits was developed for the [Reinventing Healthy Spaces
-with Amazon Web Services challenge](https://www.hackster.io/contests/Healthy-Spaces-with-AWS) and is available on [Hackster.io](https://www.hackster.io/avantassel/airbits-ea8503).
+AirBits was developed for the [Reinventing Healthy Spaces with Amazon Web Services challenge](https://www.hackster.io/contests/Healthy-Spaces-with-AWS) and is available on [Hackster.io](https://www.hackster.io/avantassel/airbits-ea8503).
 
 The goal of AirBits is to keep you informed about the levels of CO2 and TVOCs in realtime for indoor spaces before you enter or even while you are there.  These bits in the air can be dangerous to you when exposed at high levels for a period of time.  
 
 As we have found out with the recent pandemic and COVID-19 (SARS-CoV-2), air flow and good ventilation in indoor spaces is critical for keeping you healthy.  High CO2 levels could mean there is poor air flow or simply that there are too many people in that space and you are best to get out of it ASAP.
 
-AirBits measures CO2, TVOCs and decibel levels.  One or many devices could be installed in a space.  The realtime data will be displayed on the M5 Core2 device screen along with colored LED lights based on current levels.  This data is also sent in realtime to AWS, which would allow people in a geo fenced area to be notified after installing an app.
+AirBits measures CO2, TVOCs and decibel levels.  One or many devices could be installed in a space.  The realtime data will be displayed on the M5 Core2 device screen along with colored LED lights based on current levels.  This data is also sent in realtime to AWS, which would allow anyone in a geo-fenced area to be notified after installing an app.  This data could also be made available on any map app for indoor air quality (Google Maps, Apple Maps).
+
+![Video](https://youtu.be/ztfLtddiE5w)
 
 ## Bourbon Street Hypothetical
 
@@ -33,7 +34,7 @@ Source: http://air-source.com/blog/osha-safety-standards-for-monitoring-restaura
 
 CO2 is considered to be minimally toxic by inhalation. The primary health effects caused by CO2 are the result of its behavior as a simple asphyxiant. A simple asphyxiant is a gas which reduces or displaces the normal oxygen in breathing air.
 
-Symptoms of mild CO2 exposure may include headache and drowsiness. At higher levels,rapid breathing, confusion, increased cardiac output, elevated blood pressure and increased arrhythmias may occur.
+Symptoms of mild CO2 exposure may include headache and drowsiness. At higher levels, rapid breathing, confusion, increased cardiac output, elevated blood pressure and increased arrhythmias may occur.
 
 Breathing oxygen depleted air caused by extreme CO2 concentrations can lead to death by
 suffocation. 
@@ -44,7 +45,7 @@ Source: https://www.fsis.usda.gov/sites/default/files/media_file/2020-08/Carbon-
 
 *Health effects of high levels of volatile organic compounds*
 
-Symptons include eye, nose and throat irritation. Headaches, loss of coordination and nausea.  Long exposure to high levels can cause damage to liver, kidney and the central nervous system. Some organics can cause cancer in animals, some are suspected or known to cause cancer in humans.
+Symptoms include eye, nose and throat irritation. Headaches, loss of coordination and nausea.  Long exposure to high levels can cause damage to liver, kidney and the central nervous system. Some organics can cause cancer in animals, some are suspected or known to cause cancer in humans.
 
 Source: https://www.epa.gov/indoor-air-quality-iaq/volatile-organic-compounds-impact-indoor-air-quality
 
@@ -124,5 +125,5 @@ Open [airbits.ino](airbits.ino) with [Arduino Studio](https://www.arduino.cc/en/
 
 ## TODO
 
-- Add GPS module to send lat/lng in order to notifiy people in a geo-fenced area.
+- Add GPS module to send lat/lng in order to notify people in a geo-fenced area.
 - Build mobile app.
