@@ -6,7 +6,9 @@ Walk through video https://youtu.be/ztfLtddiE5w
 
 ## What It Is
 
-AirBits was developed for the [Reinventing Healthy Spaces with Amazon Web Services challenge](https://www.hackster.io/contests/Healthy-Spaces-with-AWS) and is available on [Hackster.io](https://www.hackster.io/avantassel/airbits-ea8503).
+AirBits was developed for the [Reinventing Healthy Spaces with Amazon Web Services challenge](https://www.hackster.io/contests/Healthy-Spaces-with-AWS) and the [2022 China-US Young Maker Competition](https://www.hackster.io/contests/2022chinausyoungmakercompetition) 
+
+Available on [Hackster.io](https://www.hackster.io/avantassel/airbits-ea8503).
 
 The goal of AirBits is to keep you informed about the levels of CO2 and TVOCs in realtime for indoor spaces before you enter or even while you are there.  These bits in the air can be dangerous to you when exposed at high levels for a period of time.  
 
@@ -126,4 +128,5 @@ Open [airbits.ino](airbits.ino) with [Arduino Studio](https://www.arduino.cc/en/
 ## TODO
 
 - Add GPS module to send lat/lng in order to notify people in a geo-fenced area.
+- Aggregate data to show hot spots on a map for bad indoor air quality.
 - Build mobile app.
